@@ -37,9 +37,13 @@ clock = pygame.time.Clock()
 score = 0
 
 class player(object):
-    """Class that is used to define the player"""
+    """Class that is used to define the player."""
 
     def __init__(self, x, y, width,height):
+        """
+        All defining variables of player.
+
+        """
         self.x = x
         self.y = y
         self.width = width
@@ -53,6 +57,10 @@ class player(object):
         self.hitbox = (self.x + 15, self.y + 5, 35, 60)
 
     def draw(self,win):
+        """
+        def that brings player into game.
+
+        """
         if self.walkCount + 1 >= 27:
             self.walkCount = 0
 
@@ -68,6 +76,10 @@ class player(object):
         #pygame.draw.rect(win, (255,0,0), (self.hitbox),2)
 
     def hit(self):
+        """
+        def that makes apple collectible.
+
+        """
         print('apple get')
         
 
@@ -75,6 +87,10 @@ class Apple():
     """Class that is used to make an apple and drop it"""
     
     def __init__(self,x,y,radius,color):
+        """
+        All defining variables of apple.
+
+        """
         self.x = x
         self.y = y
         self.radius = radius
@@ -83,11 +99,19 @@ class Apple():
         self.hitbox = (self.x + -10, self.y + -10, 20, 20)
 
     def draw(self,win):
+        """
+        def that brings apple into game.
+
+        """
         pygame.draw.circle(win, self.color, (self.x,self.y), self.radius)
         self.hitbox = (self.x + -10, self.y + -10, 20, 20)
         #pygame.draw.rect(win, (255,0,0), self.hitbox,2)
 
     def hit(self):
+        """
+        def that helps apple be collectible.
+
+        """
         print('apple get')
         pass
 
@@ -106,9 +130,17 @@ class tree(pygame.sprite.Sprite):
         self.ymax = 75
         self.yRange = random.randrange(self.ymin, self.ymax)
     def draw(self, win):
+        """
+        def that brings tree into game.
+
+        """
         win.blit(pygame.image.load("tree_top.png"),(self.x, self.y))
 
 def redrawGameWindow():
+        """
+        def that draws the window and everything on it.
+
+        """
     win.blit(bg, (0,0))
     text = font.render('Score: ' + str(score), 1, (0, 0, 0))
     win.blit(text, (390, 10))
@@ -120,7 +152,6 @@ def redrawGameWindow():
 
 
 #mainloop
-"""Loop used to handle movement and location for multiple variables"""
 font = pygame.font.SysFont('arial', 30, True)
 man = player(300, 410, 64, 64)
 apples = []
