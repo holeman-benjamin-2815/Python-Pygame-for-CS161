@@ -1,18 +1,44 @@
+"""
+Make a simple apple colecting game using pygame.
+
+Using pygame, create a game that uses classes and loops to make
+a character that moves left and right, jumps, and colects "apples"
+that falls from a tree to gain points.
+
+Benjamin Holeman
+"""
 import pygame
+import random
 pygame.init()
 
 win = pygame.display.set_mode((500,480))
 
 pygame.display.set_caption("First Game")
 
-walkRight = [pygame.image.load('R1.png'), pygame.image.load('R2.png'), pygame.image.load('R3.png'), pygame.image.load('R4.png'), pygame.image.load('R5.png'), pygame.image.load('R6.png'), pygame.image.load('R7.png'), pygame.image.load('R8.png'), pygame.image.load('R9.png')]
-walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'), pygame.image.load('L3.png'), pygame.image.load('L4.png'), pygame.image.load('L5.png'), pygame.image.load('L6.png'), pygame.image.load('L7.png'), pygame.image.load('L8.png'), pygame.image.load('L9.png')]
+walkRight = [
+    pygame.image.load('R1.png'), pygame.image.load('R2.png'),
+    pygame.image.load('R3.png'), pygame.image.load('R4.png'),
+    pygame.image.load('R5.png'), pygame.image.load('R6.png'),
+    pygame.image.load('R7.png'), pygame.image.load('R8.png'),
+    pygame.image.load('R9.png')
+    ]
+walkLeft = [
+    pygame.image.load('L1.png'), pygame.image.load('L2.png'),
+    pygame.image.load('L3.png'), pygame.image.load('L4.png'),
+    pygame.image.load('L5.png'), pygame.image.load('L6.png'),
+    pygame.image.load('L7.png'), pygame.image.load('L8.png'),
+    pygame.image.load('L9.png')
+    ]
 bg = pygame.image.load('bg.jpg')
 char = pygame.image.load('standing.png')
 
 clock = pygame.time.Clock()
 
+score = 0
+
 class player(object):
+    """Class that is used to define the player"""
+
     def __init__(self, x, y, width,height):
         self.x = x
         self.y = y
@@ -24,6 +50,7 @@ class player(object):
         self.left = False
         self.right = False
         self.walkCount = 0
+        self.hitbox = (self.x + 15, self.y + 5, 35, 60)
 
     def draw(self,win):
         if self.walkCount + 1 >= 27:
@@ -37,17 +64,67 @@ class player(object):
             self.walkCount +=1
         else:
             win.blit(char, (self.x,self.y))
+        self.hitbox = (self.x + 15, self.y + 5, 35, 60)
+        #pygame.draw.rect(win, (255,0,0), (self.hitbox),2)
 
+    def hit(self):
+        print('apple get')
+        
 
+class Apple():
+    """Class that is used to make an apple and drop it"""
+    
+    def __init__(self,x,y,radius,color):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+        self.vel = 10
+        self.hitbox = (self.x + -10, self.y + -10, 20, 20)
+
+    def draw(self,win):
+        pygame.draw.circle(win, self.color, (self.x,self.y), self.radius)
+        self.hitbox = (self.x + -10, self.y + -10, 20, 20)
+        #pygame.draw.rect(win, (255,0,0), self.hitbox,2)
+
+    def hit(self):
+        print('apple get')
+        pass
+
+ 
+class tree(pygame.sprite.Sprite):
+    """Class used to hide and help drop the apple using random"""
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.xmin = 96
+        self.xmax = 106
+        self.xRange = random.randrange(self.xmin, self.xmax)
+        self.ymin = 65
+        self.ymax = 75
+        self.yRange = random.randrange(self.ymin, self.ymax)
+    def draw(self, win):
+        win.blit(pygame.image.load("tree_top.png"),(self.x, self.y))
 
 def redrawGameWindow():
     win.blit(bg, (0,0))
+    text = font.render('Score: ' + str(score), 1, (0, 0, 0))
+    win.blit(text, (390, 10))
     man.draw(win)
+    for apple in apples:
+        apple.draw(win)
+    tree.draw(win)
     pygame.display.update()
 
 
 #mainloop
+"""Loop used to handle movement and location for multiple variables"""
+font = pygame.font.SysFont('arial', 30, True)
 man = player(300, 410, 64, 64)
+apples = []
+tree = tree(36, 55, 214, 238) 
 run = True
 while run:
     clock.tick(27)
@@ -55,6 +132,25 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+    for apple in apples:
+        if (apple.y - apple.radius < man.hitbox[1] + man.hitbox[3]
+            and apple.y + apple.radius > man.hitbox[1]
+):
+            if (apple.x + apple.radius > man.hitbox[0]
+                and apple.x - apple.radius < man.hitbox[0] + man.hitbox[2]
+):
+                man.hit()
+                score += 1
+                apples.pop(apples.index(apple))
+            
+        if apple.y < 500 and apple.y > 0:
+            apple.y += apple.vel
+        else:
+            apples.pop(apples.index(apple))
+
+    if random.randrange(0, 100) < 5:
+        apples.append(Apple(tree.xRange, tree.yRange, 5, (255, 0, 0)))
 
     keys = pygame.key.get_pressed()
 
