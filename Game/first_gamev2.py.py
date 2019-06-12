@@ -141,15 +141,14 @@ def redrawGameWindow():
         def that draws the window and everything on it.
 
         """
-    win.blit(bg, (0,0))
-    text = font.render('Score: ' + str(score), 1, (0, 0, 0))
-    win.blit(text, (390, 10))
-    man.draw(win)
-    for apple in apples:
-        apple.draw(win)
-    tree.draw(win)
-    pygame.display.update()
-
+        win.blit(bg, (0,0))
+        text = font.render('Score: ' + str(score), 1, (0, 0, 0))
+        win.blit(text, (390, 10))
+        man.draw(win)
+        for apple in apples:
+            apple.draw(win)
+        tree.draw(win)
+        pygame.display.update()
 
 #mainloop
 font = pygame.font.SysFont('arial', 30, True)
